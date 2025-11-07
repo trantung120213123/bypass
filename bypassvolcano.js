@@ -1,15 +1,14 @@
 (() => {
     'use strict';
 
-    const host = location.hostname; // check host
-    const debug = false // enable debug logs (console)
+    const host = location.hostname;
+    const debug = false;
+    let currentLanguage = localStorage.getItem('lang') || 'vi';
 
-    let currentLanguage = localStorage.getItem('lang') || 'vi'; // default language: vi/en
-
-    // Translations
+    // Translations - ĐÃ CHUYỂN THÀNH LUE X
     const translations = {
         vi: {
-            title: "Dyrian Bypass",
+            title: "LUE X Bypass",
             pleaseSolveCaptcha: "Vui lòng giải CAPTCHA để tiếp tục",
             captchaSuccess: "CAPTCHA đã thành công",
             redirectingToWork: "Đang qua Work.ink...",
@@ -20,10 +19,10 @@
             backToCheckpoint: "Đang về lại Checkpoint...",
             captchaSuccessBypassing: "CAPTCHA đã thành công, đang bypass...",
             version: "Phiên bản v1.6.3.0",
-            madeBy: "Được tạo bởi DyRian (dựa trên IHaxU)"
+            madeBy: "Được tạo bởi LUE X (dựa trên IHaxU)"
         },
         en: {
-            title: "Dyrian Bypass",
+            title: "LUE X Bypass",
             pleaseSolveCaptcha: "Please solve the CAPTCHA to continue",
             captchaSuccess: "CAPTCHA solved successfully",
             redirectingToWork: "Redirecting to Work.ink...",
@@ -34,7 +33,7 @@
             backToCheckpoint: "Returning to checkpoint...",
             captchaSuccessBypassing: "CAPTCHA solved successfully, bypassing...",
             version: "Version v1.6.3.0",
-            madeBy: "Made by DyRian (based on IHaxU)"
+            madeBy: "Made by LUE X (based on IHaxU)"
         }
     };
 
@@ -62,6 +61,7 @@
             this.isMinimized = false;
             this.body = null;
             this.minimizeBtn = null;
+            this.websiteBtn = null;
             this.init();
         }
 
@@ -76,104 +76,165 @@
 
             const style = document.createElement('style');
             style.textContent = `
+                @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@700;800&display=swap');
+
                 * { margin: 0; padding: 0; box-sizing: border-box; }
 
                 .panel-container {
                     position: fixed;
                     top: 20px;
                     right: 20px;
-                    width: 400px;
+                    width: 500px;
                     z-index: 2147483647;
-                    font-family: 'Segoe UI', Roboto, 'Noto Sans', Arial, sans-serif;
+                    font-family: 'Exo 2', sans-serif;
+                    perspective: 1200px;
                 }
 
                 .panel {
-                    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-                    border-radius: 16px;
-                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+                    background: #0a0000;
+                    border: 3px solid #ff1a1a;
+                    border-radius: 28px;
                     overflow: hidden;
-                    animation: slideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-                    transition: all 0.3s ease;
+                    box-shadow: 
+                        0 0 50px #ff1a1a,
+                        0 0 100px #ff3333,
+                        0 0 150px rgba(255, 26, 26, 0.5),
+                        inset 0 0 50px rgba(255, 26, 26, 0.2);
+                    animation: ignite 0.9s ease-out;
+                    transition: all 0.5s ease;
+                    transform-style: preserve-3d;
+                    position: relative;
                 }
 
-                @keyframes slideIn {
+                @keyframes ignite {
                     from {
                         opacity: 0;
-                        transform: translateX(100px) scale(0.9);
+                        transform: scale(0.8) rotateX(-20deg) translateY(-40px);
+                        box-shadow: 0 0 0 #ff1a1a;
                     }
                     to {
                         opacity: 1;
-                        transform: translateX(0) scale(1);
+                        transform: scale(1) rotateX(0) translateY(0);
                     }
                 }
 
                 .header {
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    padding: 16px 20px;
+                    background: linear-gradient(135deg, #1f0000 0%, #3d0000 50%, #1f0000 100%);
+                    padding: 30px 34px;
+                    display: flex;
+                    align-items: center;
+                    gap: 24px;
+                    border-bottom: 2px solid #ff1a1a;
                     position: relative;
                     overflow: hidden;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
                 }
 
                 .header::before {
                     content: '';
                     position: absolute;
-                    top: -50%;
-                    left: -50%;
-                    width: 200%;
-                    height: 200%;
-                    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-                    animation: shine 3s infinite;
+                    top: -250%;
+                    left: -250%;
+                    width: 600%;
+                    height: 600%;
+                    background: radial-gradient(circle, rgba(255, 26, 26, 0.35), transparent 65%);
+                    animation: redPulse 6s infinite;
+                    pointer-events: none;
                 }
 
-                @keyframes shine {
-                    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-                    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+                @keyframes redPulse {
+                    0%, 100% { opacity: 0.3; transform: scale(1); }
+                    50% { opacity: 0.7; transform: scale(1.5); }
+                }
+
+                .logo-container {
+                    width: 82px;
+                    height: 82px;
+                    background: linear-gradient(135deg, #ff1a1a, #cc0000);
+                    border-radius: 22px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    position: relative;
+                    box-shadow: 
+                        0 0 40px #ff1a1a,
+                        0 0 70px #ff3333,
+                        inset 0 0 35px rgba(0,0,0,0.7);
+                    animation: logoFloat 3s infinite ease-in-out;
+                    border: 3.5px solid #ff4d4d;
+                    overflow: hidden;
+                    transform: rotateX(12deg);
+                }
+
+                .logo-container::after {
+                    content: 'LUE X';
+                    font-family: 'Orbitron', sans-serif;
+                    font-weight: 900;
+                    font-size: 22px;
+                    color: #fff;
+                    letter-spacing: 0.8px;
+                    text-shadow: 
+                        0 0 20px #ff1a1a,
+                        0 0 35px #ff3333,
+                        0 0 45px #ff1a1a;
+                    position: absolute;
+                    transform: rotateX(-12deg);
+                }
+
+                @keyframes logoFloat {
+                    0%, 100% { transform: translateY(0) rotateX(12deg); }
+                    50% { transform: translateY(-10px) rotateX(12deg); }
                 }
 
                 .title {
-                    font-size: 20px;
-                    font-weight: 700;
+                    font-family: 'Orbitron', sans-serif;
+                    font-size: 30px;
+                    font-weight: 900;
                     color: #fff;
-                    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-                    position: relative;
-                    z-index: 1;
+                    text-shadow: 
+                        0 0 30px #ff1a1a,
+                        0 4px 12px rgba(0,0,0,0.9);
+                    letter-spacing: 3px;
+                    flex: 1;
+                    background: linear-gradient(90deg, #fff, #ff4d4d);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
                 }
 
                 .minimize-btn {
-                    background: rgba(255,255,255,0.15);
-                    border: none;
+                    background: rgba(255, 26, 26, 0.35);
+                    border: 3px solid #ff4d4d;
                     color: #fff;
-                    width: 32px;
-                    height: 32px;
+                    width: 52px;
+                    height: 52px;
                     border-radius: 50%;
                     cursor: pointer;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    transition: all 0.2s;
-                    font-size: 20px;
+                    font-size: 32px;
                     font-weight: 700;
-                    position: relative;
-                    z-index: 1;
+                    transition: all 0.45s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                    box-shadow: 0 0 35px rgba(255, 26, 26, 0.7);
                 }
 
                 .minimize-btn:hover {
-                    background: rgba(255,255,255,0.3);
-                    transform: scale(1.1);
+                    background: #ff1a1a;
+                    transform: scale(1.35) rotate(180deg);
+                    box-shadow: 0 0 60px #ff3333, 0 0 80px #ff1a1a;
                 }
 
                 .status-section {
-                    padding: 20px;
-                    border-bottom: 1px solid rgba(255,255,255,0.05);
+                    padding: 32px;
+                    background: rgba(255, 26, 26, 0.06);
+                    border-bottom: 1px dashed #ff1a1a;
                 }
 
                 .status-box {
-                    background: rgba(255,255,255,0.05);
-                    border-radius: 12px;
-                    padding: 16px;
+                    background: rgba(30, 0, 0, 0.7);
+                    border: 2.5px solid rgba(255, 26, 26, 0.55);
+                    border-radius: 24px;
+                    padding: 26px;
                     position: relative;
                     overflow: hidden;
                 }
@@ -181,144 +242,180 @@
                 .status-box::before {
                     content: '';
                     position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
-                    animation: shimmer 2s infinite;
+                    top: 0; left: 0;
+                    width: 100%; height: 100%;
+                    background: linear-gradient(90deg, transparent, rgba(255, 26, 26, 0.18), transparent);
+                    animation: scanRed 2.8s infinite;
                 }
 
-                @keyframes shimmer {
-                    0% { transform: translateX(-100%); }
-                    100% { transform: translateX(100%); }
+                @keyframes scanRed {
+                    0% { transform: translateX(-180%); }
+                    100% { transform: translateX(180%); }
                 }
 
                 .status-content {
                     display: flex;
                     align-items: center;
-                    gap: 12px;
+                    gap: 24px;
                     position: relative;
                     z-index: 1;
                 }
 
                 .status-dot {
-                    width: 14px;
-                    height: 14px;
+                    width: 24px;
+                    height: 24px;
                     border-radius: 50%;
-                    animation: pulse 2s ease-in-out infinite;
-                    box-shadow: 0 0 12px currentColor;
-                    flex-shrink: 0;
+                    background: #ff1a1a;
+                    box-shadow: 0 0 40px #ff3333, 0 0 60px #ff1a1a;
+                    animation: dotPulse 1.6s infinite;
                 }
 
-                @keyframes pulse {
-                    0%, 100% { opacity: 1; transform: scale(1); }
-                    50% { opacity: 0.7; transform: scale(1.15); }
-                }
+                .status-dot.info { background: #60a5fa; box-shadow: 0 0 40px #60a5fa; }
+                .status-dot.success { background: #4ade80; box-shadow: 0 0 40px #4ade80; }
+                .status-dot.warning { background: #facc15; box-shadow: 0 0 40px #facc15; }
+                .status-dot.error { background: #f87171; box-shadow: 0 0 40px #f87171; }
 
-                .status-dot.info { background: #60a5fa; }
-                .status-dot.success { background: #4ade80; }
-                .status-dot.warning { background: #facc15; }
-                .status-dot.error { background: #f87171; }
+                @keyframes dotPulse {
+                    0%, 100% { transform: scale(1); }
+                    50% { transform: scale(1.7); opacity: 0.7; }
+                }
 
                 .status-text {
-                    color: #fff;
-                    font-size: 14px;
-                    font-weight: 500;
+                    color: #ffeeee;
+                    font-size: 17px;
+                    font-weight: 700;
                     flex: 1;
-                    line-height: 1.5;
+                    line-height: 1.7;
+                    text-shadow: 0 0 18px rgba(255, 26, 26, 0.8);
                 }
 
                 .panel-body {
-                    max-height: 500px;
+                    max-height: 600px;
                     overflow: hidden;
-                    transition: all 0.3s ease;
+                    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
                     opacity: 1;
+                    background: rgba(25, 0, 0, 0.45);
                 }
 
                 .panel-body.hidden {
                     max-height: 0;
                     opacity: 0;
+                    padding: 0 34px;
                 }
 
                 .language-section {
-                    padding: 16px 20px;
-                    border-bottom: 1px solid rgba(255,255,255,0.05);
+                    padding: 28px 34px;
+                    border-bottom: 1px dashed #ff1a1a;
                 }
 
                 .lang-toggle {
                     display: flex;
-                    gap: 10px;
+                    gap: 22px;
                 }
 
                 .lang-btn {
                     flex: 1;
-                    background: rgba(255,255,255,0.05);
-                    border: 2px solid rgba(255,255,255,0.1);
-                    color: #fff;
-                    padding: 10px;
-                    border-radius: 10px;
+                    background: rgba(255, 26, 26, 0.2);
+                    border: 3px solid rgba(255, 77, 77, 0.65);
+                    color: #ff9999;
+                    padding: 18px;
+                    border-radius: 22px;
                     cursor: pointer;
-                    font-weight: 600;
-                    font-size: 14px;
-                    transition: all 0.2s;
+                    font-weight: 800;
+                    font-size: 15.5px;
+                    transition: all 0.45s ease;
                     text-transform: uppercase;
-                    letter-spacing: 1px;
+                    letter-spacing: 3px;
                 }
 
                 .lang-btn:hover {
-                    background: rgba(255,255,255,0.1);
-                    transform: translateY(-2px);
+                    background: rgba(255, 26, 26, 0.4);
+                    border-color: #ff1a1a;
+                    color: #fff;
+                    transform: translateY(-7px);
+                    box-shadow: 0 20px 40px rgba(255, 26, 26, 0.6);
                 }
 
                 .lang-btn.active {
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    border-color: #667eea;
-                    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+                    background: linear-gradient(135deg, #ff1a1a, #cc0000);
+                    border-color: #ff1a1a;
+                    color: #fff;
+                    box-shadow: 0 0 50px rgba(255, 26, 26, 1);
+                    font-weight: 900;
                 }
 
                 .info-section {
-                    padding: 16px 20px;
-                    background: rgba(0,0,0,0.2);
+                    padding: 28px 34px;
+                    text-align: center;
+                    background: rgba(0, 0, 0, 0.55);
                 }
 
                 .version {
-                    color: rgba(255,255,255,0.6);
-                    font-size: 12px;
-                    font-weight: 500;
-                    margin-bottom: 8px;
-                    text-align: center;
+                    color: #ff6666;
+                    font-size: 15.5px;
+                    font-weight: 700;
+                    margin-bottom: 14px;
+                    text-shadow: 0 0 18px rgba(255, 26, 26, 0.7);
                 }
 
                 .credit {
-                    color: rgba(255,255,255,0.6);
-                    font-size: 12px;
-                    font-weight: 500;
-                    text-align: center;
-                    margin-bottom: 8px;
+                    color: #ff9999;
+                    font-size: 15.5px;
+                    font-weight: 700;
+                    margin-bottom: 20px;
                 }
 
                 .credit-author {
-                    color: #667eea;
-                    font-weight: 700;
+                    color: #ff1a1a;
+                    font-weight: 900;
+                    font-family: 'Orbitron', sans-serif;
+                    text-shadow: 0 0 25px #ff1a1a;
                 }
 
                 .links {
                     display: flex;
                     justify-content: center;
-                    gap: 16px;
-                    font-size: 11px;
+                    gap: 36px;
+                    margin-bottom: 20px;
                 }
 
                 .links a {
-                    color: #667eea;
+                    color: #ff6666;
                     text-decoration: none;
-                    transition: all 0.2s;
+                    font-weight: 800;
+                    font-size: 14px;
+                    transition: all 0.45s;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
                 }
 
                 .links a:hover {
-                    color: #764ba2;
-                    text-decoration: underline;
+                    color: #ff1a1a;
+                    text-shadow: 0 0 22px #ff1a1a;
+                    transform: scale(1.3);
+                }
+
+                .website-btn {
+                    display: inline-block;
+                    background: linear-gradient(135deg, #ff1a1a, #cc0000);
+                    color: #fff;
+                    padding: 16px 32px;
+                    border-radius: 60px;
+                    font-weight: 800;
+                    font-size: 15px;
+                    text-transform: uppercase;
+                    letter-spacing: 2.5px;
+                    cursor: pointer;
+                    margin-top: 18px;
+                    transition: all 0.45s ease;
+                    box-shadow: 0 0 35px rgba(255, 26, 26, 0.7);
+                    text-shadow: 0 0 18px #ff1a1a;
+                }
+
+                .website-btn:hover {
+                    background: #ff3333;
+                    transform: translateY(-5px) scale(1.08);
+                    box-shadow: 0 0 60px #ff1a1a, 0 0 85px #ff3333;
                 }
 
                 @media (max-width: 480px) {
@@ -328,6 +425,9 @@
                         left: 10px;
                         width: auto;
                     }
+                    .title { font-size: 26px; }
+                    .logo-container { width: 70px; height: 70px; }
+                    .logo-container::after { font-size: 19px; }
                 }
             `;
 
@@ -337,7 +437,8 @@
                 <div class="panel-container">
                     <div class="panel">
                         <div class="header">
-                            <div class="title">${t('title')}</div>
+                            <div class="logo-container"></div>
+                            <div class="title">LUE X BYPASS</div>
                             <button class="minimize-btn" id="minimize-btn">−</button>
                         </div>
                         <div class="status-section">
@@ -358,11 +459,14 @@
                             <div class="info-section">
                                 <div class="version" id="version">${t('version')}</div>
                                 <div class="credit" id="credit">
-                                    ${t('madeBy')}
+                                    ${t('madeBy').replace('LUE X', '<span class="credit-author">LUE X</span>')}
                                 </div>
                                 <div class="links">
-                                    <a href="https://www.youtube.com/@dyydeptry" target="_blank">YouTube</a>
-                                    <a href="https://discord.gg/DWyEfeBCzY" target="_blank">Discord</a>
+                                    <a href="https://www.youtube.com/@luexbypass" target="_blank">YouTube</a>
+                                    <a href="https://discord.gg/luexbypass" target="_blank">Discord</a>
+                                </div>
+                                <div class="website-btn" id="website-btn">
+                                    luexteamscript.vercel.app
                                 </div>
                             </div>
                         </div>
@@ -382,6 +486,7 @@
             this.langBtns = Array.from(this.shadow.querySelectorAll('.lang-btn'));
             this.body = this.shadow.querySelector('#panel-body');
             this.minimizeBtn = this.shadow.querySelector('#minimize-btn');
+            this.websiteBtn = this.shadow.querySelector('#website-btn');
 
             document.documentElement.appendChild(this.container);
         }
@@ -390,6 +495,7 @@
             this.langBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     currentLanguage = btn.dataset.lang;
+                    localStorage.setItem('lang', currentLanguage);
                     this.updateLanguage();
                 });
             });
@@ -399,37 +505,25 @@
                 this.body.classList.toggle('hidden');
                 this.minimizeBtn.textContent = this.isMinimized ? '+' : '−';
             });
+
+            this.websiteBtn.addEventListener('click', () => {
+                window.open('https://luexteamscript.vercel.app', '_blank');
+            });
         }
 
         updateLanguage() {
-            localStorage.setItem('lang', currentLanguage);
-
             this.langBtns.forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.lang === currentLanguage);
             });
 
-            this.shadow.querySelector('.title').textContent = t('title');
+            this.shadow.querySelector('.title').textContent = 'LUE X BYPASS';
             this.versionEl.textContent = t('version');
-            this.creditEl.textContent = t('madeBy');
+            this.creditEl.innerHTML = t('madeBy').replace('LUE X', '<span class="credit-author">LUE X</span>');
 
             if (this.currentMessageKey) {
                 this.show(this.currentMessageKey, this.currentType, this.currentReplacements);
             }
         }
-
-        show(messageKey, type = 'info', replacements = {}) {
-            this.currentMessageKey = messageKey;
-            this.currentType = type;
-            this.currentReplacements = replacements;
-
-            const message = t(messageKey, replacements);
-            this.statusText.textContent = message;
-            this.statusDot.className = `status-dot ${type}`;
-        }
-    }
-
-    let panel = null;
-    setTimeout(() => { panel = new BypassPanel(); panel.show('pleaseSolveCaptcha', 'info'); }, 100);
 
     if (host.includes("key.volcano.wtf")) handleVolcano();
     else if (host.includes("work.ink")) handleWorkInk();
@@ -1016,3 +1110,4 @@
         ob.observe(document.documentElement, { childList: true, subtree: true });
     }
 })();
+
