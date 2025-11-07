@@ -525,6 +525,23 @@
             }
         }
 
+        show(messageKey, type = 'info', replacements = {}) {
+            this.currentMessageKey = messageKey;
+            this.currentType = type;
+            this.currentReplacements = replacements;
+
+            const message = t(messageKey, replacements);
+            this.statusText.textContent = message;
+            this.statusDot.className = `status-dot ${type}`;
+        }
+    }
+
+    let panel = null;
+    setTimeout(() => {
+        panel = new BypassPanel();
+        panel.show('pleaseSolveCaptcha', 'info');
+    }, 100);
+
     if (host.includes("key.volcano.wtf")) handleVolcano();
     else if (host.includes("work.ink")) handleWorkInk();
 
@@ -1110,4 +1127,5 @@
         ob.observe(document.documentElement, { childList: true, subtree: true });
     }
 })();
+
 
